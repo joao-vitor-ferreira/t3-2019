@@ -26,5 +26,9 @@ CalculoCirculoRetangulo.o: CalculoCirculoRetangulo.c CalculoCirculoRetangulo.h
 	gcc -o CalculoCirculoRetangulo.o -c CalculoCirculoRetangulo.c -g -std=c99 -fstack-protector-all
 Svg.o: Svg.c Svg.h
 	gcc -o Svg.o -c Svg.c -g -std=c99 -fstack-protector-all -lm
+Vertice.o: Vertice.c Vertice.h
+	gcc -o Vertice.o -c Vertice.c -g -std=c99 -fstack-protector-all -lm
+Seguimento.o: Seguimento.c Seguimento.h
+	gcc -o Seguimento.o -c Seguimento.c -g -std=c99 -fstack-protector-all -lm
 clear:
 	rm -rf *.o vgcore*
