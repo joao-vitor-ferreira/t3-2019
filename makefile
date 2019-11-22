@@ -1,5 +1,5 @@
-siguel: siguel.o Vector.o Retangulo.o Circulo.o CalculoCirculoRetangulo.o Comandos.o Svg.o Cidade.o Lista.o Quadra.o Semaforo.o Hidrante.o Torre.o 
-	gcc -o siguel siguel.o Vector.o Circulo.o Retangulo.o CalculoCirculoRetangulo.o Comandos.o Svg.o Cidade.o Lista.o Quadra.o Semaforo.o Hidrante.o Torre.o -lm -std=c99 -fstack-protector-all
+siguel: siguel.o Vector.o Retangulo.o Circulo.o CalculoCirculoRetangulo.o Comandos.o Svg.o Cidade.o Lista.o Quadra.o Semaforo.o Hidrante.o Torre.o Seguimento.o Vertice.o Ponto.o Predio.o
+	gcc -o siguel siguel.o Vector.o Circulo.o Retangulo.o CalculoCirculoRetangulo.o Comandos.o Svg.o Cidade.o Lista.o Quadra.o Semaforo.o Hidrante.o Torre.o Seguimento.o Vertice.o Ponto.o  Predio.o -lm -std=c99 -fstack-protector-all
 siguel.o: siguel.c
 	gcc -o siguel.o -c siguel.c -g -std=c99 -fstack-protector-all
 Cidade.o: Cidade.c Cidade.h
@@ -30,5 +30,7 @@ Vertice.o: Vertice.c Vertice.h
 	gcc -o Vertice.o -c Vertice.c -g -std=c99 -fstack-protector-all -lm
 Seguimento.o: Seguimento.c Seguimento.h
 	gcc -o Seguimento.o -c Seguimento.c -g -std=c99 -fstack-protector-all -lm
+Predio.o: Predio.c Predio.h
+	gcc -o Predio.o -c Predio.c -g -std=c99 -fstack-protector-all -lm
 clear:
 	rm -rf *.o vgcore*

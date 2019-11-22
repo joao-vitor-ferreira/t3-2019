@@ -32,7 +32,7 @@ double getVerticePontoY(Vertice v){
 
 char getVerticeTipo(Vertice v){
     vertice *newV = (vertice*)v;
-    return newV->tipe
+    return newV->type;
 }
 
 char *getVerticeCodigo(Vertice v){

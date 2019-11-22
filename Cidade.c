@@ -19,6 +19,8 @@ typedef struct {
     Lista lHid;
     Lista lTor;
     Lista lFor;
+    int cirQntd;
+    int retQntd;
 }cidade;
 
 typedef struct {
@@ -36,6 +38,8 @@ Cidade createCidade(int i, int nq, int nh, int ns, int nt){
     city->lTor = createList(nt);
     city->lHid = createList(nh);
     city->lFor = createList(i);
+    city->cirQntd = 0;
+    city->retQntd = 0;
     return city;
 }
 
@@ -62,6 +66,10 @@ void addForma(Cidade city, Item info, int type){
     forma->thing = info;
     forma->type = type;
     insertList(newCity->lFor, forma);
+    if (type == 0)
+        newCity->cirQntd++;
+    else
+        newCity->retQntd++;
 }
 
 void addQuadra(Cidade city, Quadra q){
@@ -227,6 +235,7 @@ void removeForma(Cidade city, Posic p){
         if (getCirculoCorPreenchimento(c1) != NULL)
             free(getCirculoCorPreenchimento(c1));
         free(c1);
+        newCity->cirQntd--;
     } else{
         r1 = forma->thing;
         if (getRetanguloCorContorno(r1) != NULL)
@@ -234,6 +243,7 @@ void removeForma(Cidade city, Posic p){
         if (getRetanguloCorPreenchimento(r1) != NULL)
             free(getRetanguloCorPreenchimento(r1));
         free(r1);
+        newCity->retQntd--;
     }
     free(forma);
     removeList(newCity->lFor, p);

@@ -12,6 +12,8 @@
 #include "CalculoCirculoRetangulo.h"
 #include "Svg.h"
 #include "Vector.h"
+#include "Seguimento.h"
+#include "Vertice.h"
 #include <stdarg.h>
 
 void funcFree(char **a){
@@ -291,7 +293,20 @@ void calcViewBoxSvg(Cidade city, double *svgW, double *svgH){
 	throughCity(city, &svgVwFor, 'f', svgW, svgH);
 }
 
-void leituraGeo(int argc, char **argv, double *svgH, double *svgW, FILE *svgMain, Cidade *city){
+void segOfRet(Lista lseg, Vector vetVert, int pos, double xi, double yi, double xf, double yf){
+	Vertice vIni, vFim;
+	Seguimento seg;
+	seg = createSeguimento(xi, yi, xf, yf);
+	vIni = createVertice(xi, yi, "original", 'i', seg);
+	vFim = createVertice(xf, yf, "original", 'f', seg);
+	insertList(lseg, seg);
+	addVector(vetVert, vIni, pos, 0);
+	pos++;
+	addVector(vetVert, vFim, pos, 0);
+	pos++;
+}
+
+void leituraGeo(int argc, char **argv, double *svgH, double *svgW, FILE *svgMain, Cidade *city, Lista lseg, Vector vetVert){
 	int NQ = 1000, NS = 1000, NH = 1000, NR = 1000, NF = 1000, i, type;
 	FILE *entrada = NULL;
 	Circulo c1 = NULL;
@@ -700,7 +715,7 @@ void trnsTor(Torre t, ...){
 }
 
 
-void leituraQry(int argc, char **argv, double *svgH, double *svgW, FILE *svgQry, Cidade *city, Vector vetor){
+void leituraQry(int argc, char **argv, double *svgH, double *svgW, FILE *svgQry, Cidade *city, Lista lseg, Vector vetVert){
 	FILE *entrada = NULL, *txt = NULL, *svgBb;
 	Item it;
 	int i, j, var, tipo1, tipo2;

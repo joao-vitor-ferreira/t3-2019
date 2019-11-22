@@ -10,6 +10,7 @@ typedef struct {
 typedef struct{
 	int size;
 	int qntd;
+	int countIndice; 
 	vector *vet;
 }head;
 
@@ -23,6 +24,7 @@ Vector createVector(int n){
 
 	(*newHead).size = n;
 	(*newHead).qntd = 0;
+	(*newHead).countIndice = 0;
 	(*newHead).vet = newVet;
 	for (i=0; i<n; i++) {
 		newVet[i].obj = NULL;
@@ -107,8 +109,7 @@ void addVector(Vector vet,	Item obj, int n, int i){
 		cabeca->qntd++;
 	}
 	else
-		printf("INDICE DO VETOR INVÁLIDO\n");
-	
+		printf("INDICE DO VETOR INVÁLIDO\n");	
 }
 
 void swap(Vector vet, int i, int j){
