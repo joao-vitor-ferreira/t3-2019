@@ -1,5 +1,5 @@
-#ifndef CALCULOCIRCULORETANGULO_H
-#define CALCULOCIRCULORETANGULO_H
+#ifndef Calculos_H
+#define Calculos_H
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>	
@@ -33,4 +33,6 @@ int retanguloInternoCirculo(double xr, double yr, double width, double height, d
 int retanguloInternoRetangulo(double xi, double yi, double wi, double hi, double xe, double ye, double we, double he);
 /*A FUNÇÃO VERIFICA SE O CIRCULO(C) ESTÁ TOTALMENTE INSERIDO DENTRO DE OUTRO RETANGULO(R)*/
 int circuloInternoRetangulo(double raio, double xc, double yc, double xr, double yr, double wr, double hr);
+/*COMPARA DOIS VALORES V1 E V2 DO TIPO double E RETORNA 1 SE V1 > V2, 0 SE V1 == V2 OU -1 SE V1 < V2*/
+int cmpDouble(double v1, double v2);
 #endif

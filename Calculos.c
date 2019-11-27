@@ -1,9 +1,41 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
-#include "CalculoCirculoRetangulo.h"
+#include "Calculos.h"
 #include "Retangulo.h"
 #include "Circulo.h"
+#include "Ponto.h"
+#include "Vector.h"
+
+/*comparação de numeros de ponto flutuante*/
+
+double funcAbs(double value){
+	if (value < 0)
+		return value*(-1);
+	return value;
+}
+
+int doubleEquals(double a, double b){
+	double dif;
+	dif = funcAbs(a - b);
+	if (dif < 0.00001)
+		return 1;
+	else
+		return 0;
+	
+}
+
+int cmpDouble(double v1, double v2){
+    if (v1 > v2)
+        return 1;
+    else if (doubleEquals(v1, v2))
+		return 0;
+	else
+		return -1;
+}
+
+Vector knn();
+
 
 /*METRICA L2*/
 
@@ -12,6 +44,14 @@ double distanciaEntrePontos(double xa, double ya, double xb, double yb){
 	return d;
 }
 
+/*METRICA L1*/
+
+double distPointsL1(double x1, double y1, double x2, double y2){
+	double dist = funcAbs(x1-x2) + funcAbs(y1-y2);
+	return (dist);
+}
+
+/* Calculos de circulos e retangulos*/
 int pontoInternoRetangulo(Retangulo r, double x, double y){
 	short p1 = 0, p2 = 0, p3 = 0 , p4 = 0;
 	double xr, yr;
@@ -161,19 +201,6 @@ double dcmCirculoCirculo(Circulo r1, Circulo r2){
 	y1 = getCirculoY(r1);
 	y2 = getCirculoY(r2);
 	return distanciaEntrePontos(x1, y1, x2, y2);
-}
-
-/*METRICA L1*/
-
-double funcAbs(double value){
-	if (value < 0)
-		return value*(-1);
-	return value;
-}
-
-double distPointsL1(double x1, double y1, double x2, double y2){
-	double dist = funcAbs(x1-x2) + funcAbs(y1-y2);
-	return (dist);
 }
 
 int retanguloInternoCirculo(double xr, double yr, double width, double height, double xc, double yc, double raio){

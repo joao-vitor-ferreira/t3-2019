@@ -19,5 +19,6 @@ char *funcSvgMain(int argc, char *argv[], char *str);
 char *pegaNomeBase(char *str);
 void printSvgVector(Vector vetor, FILE *svg);
 char *funcSvg(int argc, char **argv);
+int cmpRaio(Vector vet, int indice, double raio);
 
 #endif

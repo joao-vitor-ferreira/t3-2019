@@ -9,11 +9,13 @@
 #include "Hidrante.h"
 #include "Retangulo.h"
 #include "Circulo.h"
-#include "CalculoCirculoRetangulo.h"
+#include "Calculos.h"
 #include "Svg.h"
 #include "Vector.h"
 #include "Seguimento.h"
 #include "Vertice.h"
+#include "Ponto.h"
+#include "Ordenacao.h"
 #include <stdarg.h>
 
 void funcFree(char **a){
@@ -307,7 +309,7 @@ void segOfRet(Lista lseg, Vector vetVert, int pos, double xi, double yi, double 
 }
 
 void leituraGeo(int argc, char **argv, double *svgH, double *svgW, FILE *svgMain, Cidade *city, Lista lseg, Vector vetVert){
-	int NQ = 1000, NS = 1000, NH = 1000, NR = 1000, NF = 1000, i, type;
+	int NQ = 1000, NS = 1000, NH = 1000, NR = 1000, NF = 1000, NP = 1000, NM = 1000, i, type;
 	FILE *entrada = NULL;
 	Circulo c1 = NULL;
 	Posic p1;
@@ -315,10 +317,13 @@ void leituraGeo(int argc, char **argv, double *svgH, double *svgW, FILE *svgMain
 	Quadra q1;
 	Semaforo s1;
 	Torre t1;
-	Hidrante h1;
+	Hidrante h1; 
+	Predio pre;
+	Muro mur;
+	char face;
 	char *line = NULL, *word = NULL, *cor1 = NULL, *cor2 = NULL, 
 	*aux = NULL, *aux2 = NULL, *aux3 = NULL, *text = NULL, *cep, *cqf, *cqs, *chf, *chs, *crf, *crs, *csf, *css;
-	double raio, x, y, height, width, sw, swc, swr, swq, swt, sws, swh;
+	double raio, x, y, height, width, sw, swc, swr, swq, swt, sws, swh, prof, mrg, frt, xa, ya;
 	line = (char*)malloc(sizeof(char)*200);
 	word =(char*)malloc(sizeof(char)*30);
 	cor1 = (char*)malloc(sizeof(char)*20);
@@ -349,8 +354,8 @@ void leituraGeo(int argc, char **argv, double *svgH, double *svgW, FILE *svgMain
 		if (strcmp(word, "sw") == 0){
 			sscanf(line, "%s %lf %lf", word, &swc, &swr);
 		}else if (strcmp(word, "nx") == 0){
-			sscanf(line, "%s %d %d %d %d %d", word, &NF, &NQ, &NH, &NS, &NR);
-			*city = createCidade(NF, NQ, NH, NS, NR);
+			sscanf(line, "%s %d %d %d %d %d %d %d", word, &NF, &NQ, &NH, &NS, &NR, &NP, &NM);
+			*city = createCidade(NF, NQ, NH, NS, NR, NP, NM);
 		}else if (strcmp(word, "cq") == 0){
 			funcFree(&cqf);
 			funcFree(&cqs);
@@ -457,6 +462,15 @@ void leituraGeo(int argc, char **argv, double *svgH, double *svgW, FILE *svgMain
 			setHidranteCorPreenchimento(h1, aux);
 			addHidrante(*city, h1);
 			svgCmpCirculo(svgH, svgW, x, y, swh);
+		} else if (strcmp(word, "prd") == 0){
+			sscanf(line, "%s %s %c %d %lf %lf %lf", word, cep, &face, &i, &frt, &prof, &mrg);
+			aux = (char*)malloc(sizeof(char)*(strlen(cep) + 1));
+			pre = createPredio(cep, face,i, frt, prof, mrg);
+			addPredio(*city, pre);
+		} else if (strcmp(word, "mur") == 0){
+			sscanf(line, "%s %lf %lf %lf %lf", word, &x, &y, &xa, &ya);
+			mur = createMuro(x, y, xa, ya);
+			addMuro(*city, mur);
 		}
 		
 	}
@@ -712,6 +726,16 @@ void trnsTor(Torre t, ...){
 		setTorreX(t, getTorreX(t) + dx);
 		setTorreY(t, getTorreY(t) + dy);
 	}
+}
+
+int cmpRaio(Vector vet, int indice, double raio){
+	Item it = getObjVector(vet, indice);
+	double *value = it;
+	return cmpDouble(raio, *value);
+}
+
+void cmdFi(){
+
 }
 
 
@@ -1020,6 +1044,10 @@ void leituraQry(int argc, char **argv, double *svgH, double *svgW, FILE *svgQry,
 			throughCity(*city, &trnsSem, 's', x, y, width, height, dx, dy, txt);
 			throughCity(*city, &trnsHid, 'h', x, y, width, height, dx, dy, txt);
 			throughCity(*city, &trnsTor, 't', x, y, width, height, dx, dy, txt);
+		} else if (strcmp(word, "f1") == 0){
+			sscanf(line, "%s %lf %lf %d %lf", word, &x, &y, &var, &raio);
+			
+			throughCity(*city, )
 		}
 	}
 	calcViewBoxSvg(*city, svgW, svgH);

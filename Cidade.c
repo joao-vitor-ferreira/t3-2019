@@ -19,6 +19,8 @@ typedef struct {
     Lista lHid;
     Lista lTor;
     Lista lFor;
+    Lista lPre;
+    Lista lMur;
     int cirQntd;
     int retQntd;
 }cidade;
@@ -30,7 +32,7 @@ typedef struct {
 
 
 
-Cidade createCidade(int i, int nq, int nh, int ns, int nt){
+Cidade createCidade(int i, int nq, int nh, int ns, int nt, int np, int nm){
     cidade *city;
     city = (cidade*)malloc(sizeof(cidade));
     city->lQua = createList(nq);
@@ -38,6 +40,8 @@ Cidade createCidade(int i, int nq, int nh, int ns, int nt){
     city->lTor = createList(nt);
     city->lHid = createList(nh);
     city->lFor = createList(i);
+    city->lPre = createList(np);
+    city->lMur = createList(nm);
     city->cirQntd = 0;
     city->retQntd = 0;
     return city;
@@ -70,6 +74,16 @@ void addForma(Cidade city, Item info, int type){
         newCity->cirQntd++;
     else
         newCity->retQntd++;
+}
+
+void addMuro(Cidade city, Muro m){
+    cidade *newCity = (cidade*)city;
+    insertList(newCity->lMur, m);
+}
+
+void addPredio(Cidade city, Predio p){
+    cidade *newCity = (cidade*)city;
+    insertList(newCity->lPre, p);
 }
 
 void addQuadra(Cidade city, Quadra q){
@@ -117,6 +131,24 @@ Item getObjSemaforo(Cidade city, Posic p){
 Item getObjTorre(Cidade city, Posic p){
     cidade *newCity = (cidade*)city;
     return getObjList(newCity->lTor, p);
+}
+
+Predio getObjPredio(Cidade city, Posic p){
+    cidade *newCity = (cidade*)city;
+    return getObjList(newCity->lPre, p);
+}
+
+Posic searchPredio(Cidade city, char *cep){
+    cidade *newCity = (cidade*)city;
+    Predio pre;
+    Posic pos;
+    for(pos = getFirst(newCity->lPre); pos >= 0; pos = getNext(newCity->lPre, pos)){
+        pre = getObjList(newCity->lPre, pos);
+        if (strcmp(cep, getPredioCep(pre)) == 0){
+            return pos;
+        }
+    }
+    return -1;
 }
 
 Posic searchForma(Cidade city, int id, int *type){
@@ -384,6 +416,10 @@ void throughCity (Cidade city, Function f, ...){
         a(newCity->lSem, f, 0, &ap);
     } else if (t == 'f'){
         a(newCity->lFor, f, 1, &ap);
-    } 
+    } else if (t == 'p'){
+        a(newCity->lPre, f, 0, &ap);
+    } else if (t == 'm'){
+        a(newCity->lMur, f, 0, &ap);
+    }
     va_end(ap);
 }

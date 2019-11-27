@@ -2,7 +2,7 @@
 #include "Torre.h"
 #include <stdlib.h>
 #include <string.h>
-#include "CalculoCirculoRetangulo.h"
+#include "Calculos.h"
 
 typedef struct{
 	double x;

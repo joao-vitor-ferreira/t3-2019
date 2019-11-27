@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include "Hidrante.h"
 #include <stdlib.h>
-#include "CalculoCirculoRetangulo.h"
+#include "Calculos.h"
 
 typedef struct{
 	double x;

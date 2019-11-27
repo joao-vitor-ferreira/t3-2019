@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include "Semaforo.h"
 #include <stdlib.h>
-#include "CalculoCirculoRetangulo.h"
+#include "Calculos.h"
 #include "Retangulo.h"
 
 typedef struct{

@@ -17,7 +17,19 @@ Muro createMuro(double xIni, double yIni, double xFim, double yFim){
     newMuro->yFim = yFim;
     return (Muro)newMuro;
 }
-double getMuroXIni(Muro m);
-double getMuroYIni(Muro m);
-double getMuroXFim(Muro m);
-double getMuroYFim(Muro m);
+double getMuroXIni(Muro m){
+    muro *newMuro = (muro*)m;
+    return newMuro->xIni;
+}
+double getMuroYIni(Muro m){
+    muro *newMuro = (muro*)m;
+    return newMuro->yIni;
+}
+double getMuroXFim(Muro m){
+    muro *newMuro = (muro*)m;
+    return newMuro->xFim;
+}
+double getMuroYFim(Muro m){
+    muro *newMuro = (muro*)m;
+    return newMuro->yFim;
+}

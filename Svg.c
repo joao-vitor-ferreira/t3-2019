@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include "Svg.h"
 #include <math.h>
-#include "CalculoCirculoRetangulo.h"
+#include "Calculos.h"
 
 void printSvgCirculo(FILE **svg, Circulo c){
 	fprintf(*svg, "<circle cx = \"%f\" cy = \"%f\" r = \"%f\" fill = \"%s\" stroke=\"%s\" stroke-width=\"1\" fill-opacity = \"0.65\"/>\n",

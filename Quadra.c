@@ -2,7 +2,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>	
-#include "CalculoCirculoRetangulo.h"
+#include "Calculos.h"
 #include "Retangulo.h"
 
 typedef struct{

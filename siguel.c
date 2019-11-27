@@ -4,7 +4,7 @@
 #include "Cidade.h"
 #include "Circulo.h"
 #include "Comandos.h"
-#include "CalculoCirculoRetangulo.h"
+#include "Calculos.h"
 #include "Svg.h"
 #include "Vector.h"
 #include "Vertice.h"
