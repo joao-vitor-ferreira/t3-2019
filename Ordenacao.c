@@ -24,6 +24,38 @@
 // }
 
 
+typedef struct reg {
+    double dist;
+    void *obj;
+}distancia;
+
+Distance createDistance(double dist, void *obj){
+    distancia *newDist = (distancia*)malloc(sizeof(distancia));
+    newDist->dist = dist;
+    newDist->obj = obj;
+}
+
+double getDistanceDist(Distance d){
+    distancia *newDist = (distancia*)d;
+    return newDist->dist;
+}
+void *getDistanceObj(Distance d){
+    distancia *newDist = (distancia*)d;
+    return newDist->obj;
+}
+
+int cmpDistance(Vector vet, int i, int j){
+    Distance d1, d2;
+    d1 = getObjVector(vet, i);
+    d2 = getObjVector(vet, j);
+    return cmpDouble(getDistanceDist(d1), getDistanceDist(d2));
+}
+
+void freeDistance(Distance d){
+    if (d != NULL)
+        free(d);
+}
+
 /* modificando o algoritmo do heapsort para encontrar os k vizinhos mais próximos */
 
 void heapknn(Vector vet, int size, int i, CompareDouble cmp){
@@ -51,11 +83,11 @@ void heapknn(Vector vet, int size, int i, CompareDouble cmp){
 
 void knn(Vector vet, CompareDouble cmp, int k){
     int i;
-    for (i = getSizeVector(vet)/2; i >= 0; i--){
+    for (i = getSizeVector(vet)/2 -1; i >= 0; i--){
         heapknn(vet, getSizeVector(vet), i, cmp);
     }
 
-    for (i = getSizeVector(vet); i>=0 && k>=0; i--, k--){
+    for (i = getSizeVector(vet)-1; i>=0 && k>=0; i--, k--){
         swap(vet, 0, i);
         heapknn(vet, i, 0, cmp);
     }
@@ -86,11 +118,11 @@ void heapknf(Vector vet, int size, int i, CompareDouble cmp){
 
 void knf(Vector vet, CompareDouble cmp, int k){
     int i;
-    for (i = getSizeVector(vet)/2; i >= 0; i--){
+    for (i = getSizeVector(vet)/2 - 1; i >= 0; i--){
         heapknf(vet, getSizeVector(vet), i, cmp);
     }
 
-    for (i = getSizeVector(vet); i>=0 && k>=0; i--, k--){
+    for (i = getSizeVector(vet) - 1; i>=0 && k>=0; i--, k--){
         swap(vet, 0, i);
         heapknf(vet, i, 0, cmp);
     }
@@ -98,19 +130,23 @@ void knf(Vector vet, CompareDouble cmp, int k){
 
 
 int knnr(Vector vet, CompareDouble cmp, double raio){
-    int i;
-    for (i = getSizeVector(vet)/2; i >= 0; i--){
+    int i, qtd_element = 0;
+    for (i = getSizeVector(vet)/2 - 1; i >= 0; i--){
         heapknn(vet, getSizeVector(vet), i, cmp);
     }
 
-    for (i = getSizeVector(vet); i>=0; i--){
-        swap(vet, 0, i);
-        heapknn(vet, i, 0, cmp);
-        if (cmpRaio(vet, i, raio)){
+    for (i = getSizeVector(vet) - 1; i>=0; i--){
+        if (cmpRaio(vet, 0, raio) < 0){
             break;
         }
+        qtd_element++;
+        swap(vet, 0, i);
+        heapknn(vet, i, 0, cmp);
     }
-    return i;
+    if (qtd_element > 0)
+        return i + 1;
+    else
+        return -1;
 }
 
 // void heapSort(Vector vet, Compare cmp, char coodn){

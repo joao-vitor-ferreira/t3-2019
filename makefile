@@ -36,5 +36,7 @@ Muro.o: Muro.c Muro.h
 	gcc -o Muro.o -c Muro.c -g -std=c99 -fstack-protector-all -lm
 Ordenacao.o: Ordenacao.c Ordenacao.h
 	gcc -o Ordenacao.o -c Ordenacao.c -g -std=c99 -fstack-protector-all
+Ponto.o: Ponto.c Ponto.h
+	gcc -o Ponto.o -c Ponto.c -g -std=c99 -fstack-protector-all
 clear:
 	rm -rf *.o vgcore*

@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include "Ponto.h"
 #include "Seguimento.h"
 
 typedef struct {
@@ -8,10 +9,7 @@ typedef struct {
 } seguimento;
 
 
-Seguimento createSeguimento(double xIni, double yIni, double xFim, double yFim){
-    Ponto pIni, pFim;
-    createPonto(xIni, yIni);
-    createPonto(xFim, yFim);
+Seguimento createSeguimento(Ponto pIni, Ponto pFim){
     seguimento *seg = (seguimento*)malloc(sizeof(seguimento));
     seg->pIni = pIni;
     seg->pFim = pFim;

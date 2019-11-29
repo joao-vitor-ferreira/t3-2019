@@ -113,6 +113,7 @@ void addVector(Vector vet,	Item obj, int n, int i){
 }
 
 void swap(Vector vet, int i, int j){
+	// printf("aki\n");
 	head *cabeca;
 	vector *vetor, v;
 	cabeca = (head*)vet;

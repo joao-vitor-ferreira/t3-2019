@@ -295,18 +295,18 @@ void calcViewBoxSvg(Cidade city, double *svgW, double *svgH){
 	throughCity(city, &svgVwFor, 'f', svgW, svgH);
 }
 
-void segOfRet(Lista lseg, Vector vetVert, int pos, double xi, double yi, double xf, double yf){
-	Vertice vIni, vFim;
-	Seguimento seg;
-	seg = createSeguimento(xi, yi, xf, yf);
-	vIni = createVertice(xi, yi, "original", 'i', seg);
-	vFim = createVertice(xf, yf, "original", 'f', seg);
-	insertList(lseg, seg);
-	addVector(vetVert, vIni, pos, 0);
-	pos++;
-	addVector(vetVert, vFim, pos, 0);
-	pos++;
-}
+// void segOfRet(Lista lseg, Vector vetVert, int pos, double xi, double yi, double xf, double yf){
+// 	Vertice vIni, vFim;
+// 	Seguimento seg;
+// 	seg = createSeguimento(xi, yi, xf, yf);
+// 	vIni = createVertice(xi, yi, "original", 'i', seg);
+// 	vFim = createVertice(xf, yf, "original", 'f', seg);
+// 	insertList(lseg, seg);
+// 	addVector(vetVert, vIni, pos, 0);
+// 	pos++;
+// 	addVector(vetVert, vFim, pos, 0);
+// 	pos++;
+// }
 
 void leituraGeo(int argc, char **argv, double *svgH, double *svgW, FILE *svgMain, Cidade *city, Lista lseg, Vector vetVert){
 	int NQ = 1000, NS = 1000, NH = 1000, NR = 1000, NF = 1000, NP = 1000, NM = 1000, i, type;
@@ -729,13 +729,44 @@ void trnsTor(Torre t, ...){
 }
 
 int cmpRaio(Vector vet, int indice, double raio){
-	Item it = getObjVector(vet, indice);
-	double *value = it;
-	return cmpDouble(raio, *value);
+	Distance d = getObjVector(vet, indice);
+	return cmpDouble(raio, getDistanceDist(d));
 }
 
-void cmdFi(){
+void cmdFiSem(Semaforo s, ...){
+	int *indice;
+	Vector vet;
+	double x, y, dist;
+	va_list ap1, *ap2, ap3;
+	va_start(ap1, s);
+	ap2 = va_arg(ap1, va_list*);
+	va_copy(ap3, *ap2);
+	x = va_arg(ap3, double);
+	y = va_arg(ap3, double);
+	vet = va_arg(ap3, Vector);
+	indice = va_arg(ap3, int*);
+	dist = distanciaEntrePontos(getSemaforoX(s), getSemaforoY(s), x, y);
+	Distance distance = createDistance(dist, s);
+	addVector(vet, distance, *indice, 0);
+	(*indice)++;
+}
 
+void cmdFiHid(Hidrante h, ...){
+	int k, *indice;
+	Vector vet;
+	double x, y, dist;
+	va_list ap1, *ap2, ap3;
+	va_start(ap1, h);
+	ap2 = va_arg(ap1, va_list*);
+	va_copy(ap3, *ap2);
+	x = va_arg(ap3, double);
+	y = va_arg(ap3, double);
+	vet = va_arg(ap3, Vector);
+	indice = va_arg(ap3, int*);
+	dist = distanciaEntrePontos(getHidranteX(h), getHidranteY(h), x, y);
+	Distance distance = createDistance(dist, h);
+	addVector(vet, distance, *indice, 0);
+	(*indice)++;
 }
 
 
@@ -1044,10 +1075,46 @@ void leituraQry(int argc, char **argv, double *svgH, double *svgW, FILE *svgQry,
 			throughCity(*city, &trnsSem, 's', x, y, width, height, dx, dy, txt);
 			throughCity(*city, &trnsHid, 'h', x, y, width, height, dx, dy, txt);
 			throughCity(*city, &trnsTor, 't', x, y, width, height, dx, dy, txt);
-		} else if (strcmp(word, "f1") == 0){
+		} else if (strcmp(word, "fi") == 0){
 			sscanf(line, "%s %lf %lf %d %lf", word, &x, &y, &var, &raio);
-			
-			throughCity(*city, )
+			int indice = 0, qtd = qtdList(getList(*city, 's'));
+			Vector vet1 = createVector(qtd), vet2;
+			qtd = qtdList(getList(*city, 'h'));
+			vet2 = createVector(qtd);
+			Distance d1;
+			throughCity(*city, &cmdFiSem, 's', x, y, vet1, &indice);
+			knn(vet1, cmpDistance, var);
+			// for (i = 0; i < getQuantidadeVector(vet1);i++){
+			// 	d1 = getObjVector(vet1, i);
+			// 	printf("dist: %f\n", getDistanceDist(d1));
+			// }
+			indice = 0;
+			throughCity(*city, &cmdFiHid, 'h', x, y, vet2, &indice);
+			indice = knnr(vet2, cmpDistance, raio);
+			if (txt == NULL){
+				aux = funcTxt(argc, argv);
+				txt = fopen(aux, "a");
+				funcFree(&aux);
+			}
+			for (i = var, j = getQuantidadeVector(vet1) - 1; i > 0 && i <= j; i--, j--){
+				d1 = getObjVector(vet1, j);
+				s1 = getDistanceObj(d1);
+				fprintf(txt, "O semaforo %s foi alterado\n", getSemaforoId(s1));
+				fprintf(svgQry, "<circle cx = \"%f\" cy = \"%f\" r = \"%f\" fill = \"%s\" stroke=\"%s\" stroke-width=\"%f\" fill-opacity = \"0.0\"/>\n", getSemaforoX(s1), getSemaforoY(s1), 8.0, "white", "yellow", getSemaforoSW(s1));
+				printSvgLine(&svgQry, x, y, getSemaforoX(s1), getSemaforoY(s1));
+				freeDistance(d1);
+			}
+			freeVector(vet1);
+			for (i = indice; i < getQuantidadeVector(vet2); i++){
+				d1 = getObjVector(vet2, i);
+				h1 = getDistanceObj(d1);
+				fprintf(txt, "O hidrante %s foi ativado\n", getHidranteId(h1));
+				fprintf(svgQry, "<circle cx = \"%f\" cy = \"%f\" r = \"%f\" fill = \"%s\" stroke=\"%s\" stroke-width=\"%f\" fill-opacity = \"0.0\"/>\n", getHidranteX(h1), getHidranteY(h1), 8.0, "white", "#ff0", getHidranteSW(h1));
+				printSvgLine(&svgQry, x, y, getHidranteX(h1), getHidranteY(h1));
+				freeDistance(d1);
+			}
+			freeVector(vet2);
+			getchar();
 		}
 	}
 	calcViewBoxSvg(*city, svgW, svgH);
