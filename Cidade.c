@@ -332,6 +332,7 @@ void removeHidrante(Cidade city, Posic p){
     free(h1);
     removeList(newCity->lHid, p);
 }
+
 typedef void (*removeElement)(Cidade, Posic);
 
 void deleteListCity(Cidade city, Lista list, removeElement func){
@@ -358,8 +359,6 @@ void freeCidade(Cidade city){
     deleteListCity(city, newCity->lTor, &removeTorre);
     if (newCity != NULL)
         free(newCity);
-    
-
 }
 
 void printSvgCidade(Cidade city, FILE *svg){

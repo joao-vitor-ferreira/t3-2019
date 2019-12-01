@@ -769,6 +769,29 @@ void cmdFiHid(Hidrante h, ...){
 	(*indice)++;
 }
 
+Ponto endereco(Cidade city, char *cep, char face, int numero){
+	Posic p1 = searchQuadra(city, cep);
+	Quadra q1 = getObjQuadra(city, p1);
+	double xq, yq, width, height, x, y;
+	xq = getQuadraX(q1);
+	yq = getQuadraY(q1);
+	width = getQuadraWidth(q1);
+	height = getQuadraHeight(q1);
+	if (face == 'N')	{
+		x = xq + numero;
+		y = yq;
+	} else if (face == 'S'){
+		x = xq + numero;
+		y = yq + height;
+	} else if (face == 'O'){
+		x = xq;
+		y = y + numero;
+	} else if (face == 'L'){
+		x = xq + width;
+		y = yq + numero;
+	}
+	return createPonto(x, y, NULL);
+}
 
 void leituraQry(int argc, char **argv, double *svgH, double *svgW, FILE *svgQry, Cidade *city, Lista lseg, Vector vetVert){
 	FILE *entrada = NULL, *txt = NULL, *svgBb;
@@ -1115,7 +1138,37 @@ void leituraQry(int argc, char **argv, double *svgH, double *svgW, FILE *svgQry,
 			}
 			freeVector(vet2);
 			getchar();
+		} else if (strcmp(word, "fh") == 0){
+			char face;
+			sscanf(line, "%s %d %s %c %d", word, &var, suf, &face, &i);
+			int indice = 0, qtd = qtdList(getList(*city, 'h'));
+			Vector vet = createVector(qtd);
+			Distance d1;
+			Ponto point = endereco(*city, suf, face, i);
+			throughCity(*city, &cmdFiHid, 'h', getPontoX(point), getPontoY(point), vet, &indice);
+			if (txt == NULL){
+				aux = funcTxt(argc, argv);
+				txt = fopen(aux, "a");
+				funcFree(&aux);
+			}			
+			if (var > 0){
+				knf(vet, &cmpDistance, var);
+				for (i = 0; i < getQuantidadeVector(vet);i++){
+					d1 = getObjVector(vet, i);
+					printf("distancia: %f <<<<<<\n", getDistanceDist(d1));
+				}
+				for (i = var, j = getQuantidadeVector(vet) - 1; i > 0 && i <= j; i--, j--){
+					d1 = getObjVector(vet, j);
+					h1 = getDistanceObj(d1);
+					fprintf(txt, "comando fh: %s\n", getHidranteId(h1));
+					fprintf(svgQry, "<circle cx = \"%f\" cy = \"%f\" r = \"%f\" fill = \"%s\" stroke=\"%s\" stroke-width=\"%f\" fill-opacity = \"0.0\"/>\n", getHidranteX(h1), getHidranteY(h1), 8.0, "white", "yellow", getHidranteSW(h1));
+					printSvgLine(&svgQry, getPontoX(point), getPontoY(point), getHidranteX(h1), getHidranteY(h1));
+					freeDistance(d1);
+				}
+				freeVector(vet);				
+			}
 		}
+		
 	}
 	calcViewBoxSvg(*city, svgW, svgH);
 	if (txt!= NULL)
