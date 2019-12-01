@@ -7,13 +7,13 @@
 #include "Ponto.h"
 #include "Vector.h"
 
-/*comparação de numeros de ponto flutuante*/
 
 double funcAbs(double value){
 	if (value < 0)
 		return value*(-1);
 	return value;
 }
+/*comparação de numeros de ponto flutuante*/
 
 int doubleEquals(double a, double b){
 	double dif;

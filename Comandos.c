@@ -749,6 +749,7 @@ void cmdFiSem(Semaforo s, ...){
 	Distance distance = createDistance(dist, s);
 	addVector(vet, distance, *indice, 0);
 	(*indice)++;
+	va_end(ap1);
 }
 
 void cmdFiHid(Hidrante h, ...){
@@ -767,6 +768,7 @@ void cmdFiHid(Hidrante h, ...){
 	Distance distance = createDistance(dist, h);
 	addVector(vet, distance, *indice, 0);
 	(*indice)++;
+	va_end(ap1);
 }
 
 Ponto endereco(Cidade city, char *cep, char face, int numero){
@@ -785,7 +787,7 @@ Ponto endereco(Cidade city, char *cep, char face, int numero){
 		y = yq + height;
 	} else if (face == 'O'){
 		x = xq;
-		y = y + numero;
+		y = yq + numero;
 	} else if (face == 'L'){
 		x = xq + width;
 		y = yq + numero;
@@ -1137,7 +1139,6 @@ void leituraQry(int argc, char **argv, double *svgH, double *svgW, FILE *svgQry,
 				freeDistance(d1);
 			}
 			freeVector(vet2);
-			getchar();
 		} else if (strcmp(word, "fh") == 0){
 			char face;
 			sscanf(line, "%s %d %s %c %d", word, &var, suf, &face, &i);
@@ -1151,22 +1152,49 @@ void leituraQry(int argc, char **argv, double *svgH, double *svgW, FILE *svgQry,
 				txt = fopen(aux, "a");
 				funcFree(&aux);
 			}			
-			if (var > 0){
-				knf(vet, &cmpDistance, var);
-				for (i = 0; i < getQuantidadeVector(vet);i++){
-					d1 = getObjVector(vet, i);
-					printf("distancia: %f <<<<<<\n", getDistanceDist(d1));
-				}
-				for (i = var, j = getQuantidadeVector(vet) - 1; i > 0 && i <= j; i--, j--){
-					d1 = getObjVector(vet, j);
-					h1 = getDistanceObj(d1);
-					fprintf(txt, "comando fh: %s\n", getHidranteId(h1));
-					fprintf(svgQry, "<circle cx = \"%f\" cy = \"%f\" r = \"%f\" fill = \"%s\" stroke=\"%s\" stroke-width=\"%f\" fill-opacity = \"0.0\"/>\n", getHidranteX(h1), getHidranteY(h1), 8.0, "white", "yellow", getHidranteSW(h1));
-					printSvgLine(&svgQry, getPontoX(point), getPontoY(point), getHidranteX(h1), getHidranteY(h1));
-					freeDistance(d1);
-				}
-				freeVector(vet);				
+			if (var >= 0)
+				knf(vet, &cmpDistance, var);				
+			else {
+				var = funcAbs(var);
+				knn(vet, &cmpDistance, var);
 			}
+			for (i = var, j = getQuantidadeVector(vet) - 1; i > 0 && i <= j; i--, j--){
+				d1 = getObjVector(vet, j);
+				h1 = getDistanceObj(d1);
+				fprintf(txt, "comando fh: %s\n", getHidranteId(h1));
+				fprintf(svgQry, "<circle cx = \"%f\" cy = \"%f\" r = \"%f\" fill = \"%s\" stroke=\"%s\" stroke-width=\"%f\" fill-opacity = \"0.0\"/>\n", getHidranteX(h1), getHidranteY(h1), 8.0, "white", "yellow", getHidranteSW(h1));
+				printSvgLine(&svgQry, getPontoX(point), getPontoY(point), getHidranteX(h1), getHidranteY(h1));
+				freeDistance(d1);
+			}
+			freeVector(vet);
+			freePonto(point);
+		} else if (strcmp(word, "fs") == 0){
+			char face;
+			sscanf(line, "%s %d %s %c %d", word, &var, suf, &face, &i);
+			int indice = 0, qtd = qtdList(getList(*city, 's'));
+			Vector vet = createVector(qtd);
+			Distance d1;
+			Ponto point = endereco(*city, suf, face, i);		
+			throughCity(*city, &cmdFiSem, 's', getPontoX(point), getPontoY(point), vet, &indice);
+			knn(vet, &cmpDistance, var);
+			// for (i = 0; i < getQuantidadeVector(vet); i++){
+			// 	printf("distance: %f\n", getDistanceDist(getObjVector(vet, i)));
+			// }
+			if (txt == NULL){
+				aux = funcTxt(argc, argv);
+				txt = fopen(aux, "a");
+				funcFree(&aux);
+			}			
+			for (i = var, j = getQuantidadeVector(vet) - 1; i > 0 && i <= j; i--, j--){
+				d1 = getObjVector(vet, j);
+				s1 = getDistanceObj(d1);
+				fprintf(txt, "comando fh: %s\n", getSemaforoId(s1));
+				fprintf(svgQry, "<circle cx = \"%f\" cy = \"%f\" r = \"%f\" fill = \"%s\" stroke=\"%s\" stroke-width=\"%f\" fill-opacity = \"0.0\"/>\n", getSemaforoX(s1), getSemaforoY(s1), 8.0, "white", "yellow", getSemaforoSW(s1));
+				printSvgLine(&svgQry, getPontoX(point), getPontoY(point), getSemaforoX(s1), getSemaforoY(s1));
+				freeDistance(d1);
+			}
+			freeVector(vet);
+			freePonto(point);
 		}
 		
 	}

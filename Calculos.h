@@ -35,5 +35,6 @@ int retanguloInternoRetangulo(double xi, double yi, double wi, double hi, double
 int circuloInternoRetangulo(double raio, double xc, double yc, double xr, double yr, double wr, double hr);
 /*COMPARA DOIS VALORES V1 E V2 DO TIPO double E RETORNA 1 SE V1 > V2, 0 SE V1 == V2 OU -1 SE V1 < V2*/
 int cmpDouble(double v1, double v2);
-
+/*função a qual retorna o valor absoluto de value, |value|*/
+double funcAbs(double value);
 #endif
