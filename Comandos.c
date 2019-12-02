@@ -1195,8 +1195,9 @@ void leituraQry(int argc, char **argv, double *svgH, double *svgW, FILE *svgQry,
 			}
 			freeVector(vet);
 			freePonto(point);
+		} else if (strcmp(word, "brl") == 0){
+			
 		}
-		
 	}
 	calcViewBoxSvg(*city, svgW, svgH);
 	if (txt!= NULL)
