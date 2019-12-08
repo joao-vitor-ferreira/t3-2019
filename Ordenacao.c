@@ -3,6 +3,7 @@
 #include <string.h>
 #include "Ordenacao.h"
 #include "Comandos.h"
+#include "Calculos.h"
 // #include "Elemento.h"
 
 // Vector ltov(Lista list, Mat matx, Mat maty, Str mid){
@@ -58,7 +59,7 @@ void freeDistance(Distance d){
 
 /* modificando o algoritmo do heapsort para encontrar os k vizinhos mais próximos */
 
-void heapknn(Vector vet, int size, int i, CompareDouble cmp){
+void heapknn(Vector vet, int size, int i, Comparacao cmp){
     int l, r, smaller, var;
     char letra;
     smaller = i;
@@ -81,7 +82,7 @@ void heapknn(Vector vet, int size, int i, CompareDouble cmp){
     }
 }
 
-void knn(Vector vet, CompareDouble cmp, int k){
+void knn(Vector vet, Comparacao cmp, int k){
     int i;
     for (i = getSizeVector(vet)/2 -1; i >= 0; i--){
         heapknn(vet, getSizeVector(vet), i, cmp);
@@ -94,7 +95,7 @@ void knn(Vector vet, CompareDouble cmp, int k){
 }
 
 
-void heapknf(Vector vet, int size, int i, CompareDouble cmp){
+void heapknf(Vector vet, int size, int i, Comparacao cmp){
     int l, r, largest, var;
     char letra;
     largest = i;
@@ -116,7 +117,7 @@ void heapknf(Vector vet, int size, int i, CompareDouble cmp){
     }
 }
 
-void knf(Vector vet, CompareDouble cmp, int k){
+void knf(Vector vet, Comparacao cmp, int k){
     int i;
     for (i = getSizeVector(vet)/2 - 1; i >= 0; i--){
         heapknf(vet, getSizeVector(vet), i, cmp);
@@ -129,7 +130,7 @@ void knf(Vector vet, CompareDouble cmp, int k){
 }
 
 
-int knnr(Vector vet, CompareDouble cmp, double raio){
+int knnr(Vector vet, Comparacao cmp, double raio){
     int i, qtd_element = 0;
     for (i = getSizeVector(vet)/2 - 1; i >= 0; i--){
         heapknn(vet, getSizeVector(vet), i, cmp);

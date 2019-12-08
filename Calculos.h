@@ -6,6 +6,8 @@
 #include <math.h>
 #include "Circulo.h"
 #include "Retangulo.h"
+#include "Ponto.h"
+#include "Segmento.h"
 	
 /*CALCULA A DISTÂNCIA ENTRE DOIS PONTOS NO PLANO CARTESIANO*/
 double distanciaEntrePontos(double xa, double ya, double xb, double yb);
@@ -37,4 +39,8 @@ int circuloInternoRetangulo(double raio, double xc, double yc, double xr, double
 int cmpDouble(double v1, double v2);
 /*função a qual retorna o valor absoluto de value, |value|*/
 double funcAbs(double value);
+/*cria um segmento orientado S (p1 --> p2) de forma que o Ponto bomba esteja a esquerda de S*/
+Segmento criaSegmentoAEsquerda(Ponto p1, Ponto p2, Ponto bomba);
+/*verifica se dois segmentos se interseptam, se sim retorna 1 e o Ponto interseccao recebe a coordenada de intersecção, senão retorna 0 e o Ponto interseccao recebe NULL*/
+int interseccaoSegmento(Segmento s1, Segmento s2, Ponto interseccao);
 #endif

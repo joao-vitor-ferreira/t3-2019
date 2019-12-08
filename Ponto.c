@@ -5,15 +5,14 @@
 typedef struct reg{
     double x;
     double y;
-    void *obj;
 } ponto;
 
-Ponto createPonto(double x, double y, void *object){
+Ponto createPonto(double x, double y){
     ponto *newPonto;
     newPonto = (ponto*)malloc(sizeof(ponto));
     newPonto->x = x;
     newPonto->y = y;
-    newPonto->obj = object;
+    // newPonto->obj = object;
     
     return (Ponto)newPonto;
 }
@@ -27,10 +26,10 @@ double getPontoY(Ponto p){
     return newPonto->y;
 }
 
-void *getPontoObj(Ponto p){
-    ponto *newPonto = (ponto*)p;
-    return newPonto->obj;
-}
+// void *getPontoObj(Ponto p){
+//     ponto *newPonto = (ponto*)p;
+//     return newPonto->obj;
+// }
 
 void setPontoX(Ponto p, double x){
     ponto *newPonto = (ponto*)p;

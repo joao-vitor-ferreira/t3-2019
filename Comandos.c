@@ -12,7 +12,7 @@
 #include "Calculos.h"
 #include "Svg.h"
 #include "Vector.h"
-#include "Seguimento.h"
+#include "Segmento.h"
 #include "Vertice.h"
 #include "Ponto.h"
 #include "Ordenacao.h"
@@ -297,8 +297,8 @@ void calcViewBoxSvg(Cidade city, double *svgW, double *svgH){
 
 // void segOfRet(Lista lseg, Vector vetVert, int pos, double xi, double yi, double xf, double yf){
 // 	Vertice vIni, vFim;
-// 	Seguimento seg;
-// 	seg = createSeguimento(xi, yi, xf, yf);
+// 	Segmento seg;
+// 	seg = createSegmento(xi, yi, xf, yf);
 // 	vIni = createVertice(xi, yi, "original", 'i', seg);
 // 	vFim = createVertice(xf, yf, "original", 'f', seg);
 // 	insertList(lseg, seg);
@@ -465,11 +465,16 @@ void leituraGeo(int argc, char **argv, double *svgH, double *svgW, FILE *svgMain
 		} else if (strcmp(word, "prd") == 0){
 			sscanf(line, "%s %s %c %d %lf %lf %lf", word, cep, &face, &i, &frt, &prof, &mrg);
 			aux = (char*)malloc(sizeof(char)*(strlen(cep) + 1));
-			pre = createPredio(cep, face,i, frt, prof, mrg);
+			p1 = searchQuadra(*city, cep);
+			q1 = getObjQuadra(*city, p1);
+			pre = createPredio(face,i, frt, prof, mrg, q1);
 			addPredio(*city, pre);
 		} else if (strcmp(word, "mur") == 0){
 			sscanf(line, "%s %lf %lf %lf %lf", word, &x, &y, &xa, &ya);
-			mur = createMuro(x, y, xa, ya);
+			Ponto p1, p2;
+			p1 = createPonto(x, y);
+			p2 = createPonto(xa, ya);
+			mur = createMuro(p1, p2);
 			addMuro(*city, mur);
 		}
 		
@@ -792,7 +797,90 @@ Ponto endereco(Cidade city, char *cep, char face, int numero){
 		x = xq + width;
 		y = yq + numero;
 	}
-	return createPonto(x, y, NULL);
+	return createPonto(x, y);
+}
+
+void predioToVertice(Predio p, ...){
+	int *count;
+	Lista lVer, lSeg;
+	Cidade city;
+	Vertice v1, v2, v3, v4;
+	Segmento s1, s2, s3, s4;
+	Ponto p1, p2, p3, p4, bomba; 
+	Quadra q;
+	va_list ap1, *ap2, ap3;
+	va_start(ap1, p);
+	ap2 = va_arg(ap1, va_list*);
+	va_copy(ap3, *ap2);
+	lVer = va_arg(ap3, Lista);
+	lSeg = va_arg(ap3, Lista);
+	bomba = va_arg(ap3, Ponto);
+	count = va_arg(ap3, int*);
+	(*count)++;
+	//pegando os pontos do predio
+	p1 = getPredioPoint(p, 1);
+	p2 = getPredioPoint(p, 2);
+	p3 = getPredioPoint(p, 3);
+	p4 = getPredioPoint(p, 4);
+
+	// printf("1 x %f y %f\n", getPontoX(p1), getPontoY(p1));
+	// printf("2 x %f y %f\n", getPontoX(p2), getPontoY(p2));
+	// printf("3 x %f y %f\n", getPontoX(p3), getPontoY(p3));
+	// printf("4 x %f y %f\n", getPontoX(p4), getPontoY(p4));
+
+	//criando segmentos a esquerda do ponto da bomba e vertices iniciais e finais
+	s1 = criaSegmentoAEsquerda(p1, p2, bomba);
+	v1 = createVertice(getSegmentoPontoInicial(s1), 'o', 'i', s1);
+	insertList(lVer, v1);
+	v2 = createVertice(getSegmentoPontoFinal(s1), 'o', 'f', s1);
+	insertList(lVer, v2);
+
+	s2 = criaSegmentoAEsquerda(p1, p3, bomba);
+	v1 = createVertice(getSegmentoPontoInicial(s2), 'o', 'i', s2);
+	insertList(lVer, v1);
+	v2 = createVertice(getSegmentoPontoFinal(s2), 'o', 'f', s2);
+	insertList(lVer, v2);
+
+	s3 = criaSegmentoAEsquerda(p4, p2, bomba);
+	v1 = createVertice(getSegmentoPontoInicial(s3), 'o', 'i', s3);
+	insertList(lVer, v1);
+	v2 = createVertice(getSegmentoPontoFinal(s3), 'o', 'f', s3);
+	insertList(lVer, v2);
+
+	s4 = criaSegmentoAEsquerda(p4, p3, bomba);
+	v1 = createVertice(getSegmentoPontoInicial(s4), 'o', 'i', s4);
+	insertList(lVer, v1);
+	v2 = createVertice(getSegmentoPontoFinal(s4), 'o', 'f', s4);
+	insertList(lVer, v2);
+
+	// adiciona os 4 segmento na lista de segmentos lSeg
+
+	insertList(lSeg, s1);
+	insertList(lSeg, s2);
+	insertList(lSeg, s3);
+	insertList(lSeg, s4);
+}
+
+void muroToVertice(Muro m, ...){
+	Lista lVer, lSeg;
+	Vertice v1, v2;
+	Segmento s1, s2, s3, s4;
+	Ponto p1, p2, p3, p4, bomba;
+	va_list ap1, *ap2, ap3;
+	va_start(ap1, m);
+	ap2 = va_arg(ap1, va_list*);
+	va_copy(ap3, *ap2);
+	lVer = va_arg(ap3, Lista);
+	lSeg = va_arg(ap3, Lista);
+	bomba = va_arg(ap3, Ponto);
+
+	s1 = criaSegmentoAEsquerda(getMuroPontoInicial(m), getMuroPontoFinal(m), bomba);
+	v1 = createVertice(getSegmentoPontoInicial(s1), 'o', 'i', s1);
+	insertList(lVer, v1);
+	v2 = createVertice(getSegmentoPontoFinal(s1), 'o', 'f', s1);
+	insertList(lVer, v2);
+
+	insertList(lSeg, s1);
 }
 
 void leituraQry(int argc, char **argv, double *svgH, double *svgW, FILE *svgQry, Cidade *city, Lista lseg, Vector vetVert){
@@ -1196,7 +1284,69 @@ void leituraQry(int argc, char **argv, double *svgH, double *svgW, FILE *svgQry,
 			freeVector(vet);
 			freePonto(point);
 		} else if (strcmp(word, "brl") == 0){
+			sscanf(line, "%s %lf %lf", word, &x, &y);
+			int count = 0;
+			Segmento s1, R4i0;
+			Vertice v1;
+			Ponto bomba = createPonto(x, y), p1, p2, p3, p4, pRi, pRf, pI;
+			Lista lVer = createList(qtdList(getList(*city, 'p'))*8 + qtdList(getList(*city, 'm'))*2 + 8);
+			Lista lSeg = createList(qtdList(getList(*city, 'p'))*8 + qtdList(getList(*city, 'm')) + 4);
+			throughCity(*city, &predioToVertice, 'p', lVer, lSeg, bomba, &count);
+	
+			throughCity(*city, &muroToVertice, 'm', lVer, lSeg, bomba);
 			
+			// calculo do retangulo da borda
+			svgCmpCirculo(svgH, svgW, x, y, 1.0);
+
+			p1 = createPonto(1, 1);
+			p2 = createPonto(*svgW - 1, 1);
+			p3 = createPonto(1, *svgH - 1);
+			p4 = createPonto(*svgW - 1, *svgH - 1);
+
+			s1 = criaSegmentoAEsquerda(p1, p2, bomba);
+			v1 = createVertice(getSegmentoPontoInicial(s1), 'r', 'i', s1);
+			insertList(lVer, v1);
+			v1 = createVertice(getSegmentoPontoFinal(s1), 'r', 'f', s1);
+			insertList(lVer, v1);
+			insertList(lSeg, s1);
+
+			s1 = criaSegmentoAEsquerda(p1, p3, bomba);
+			v1 = createVertice(getSegmentoPontoInicial(s1), 'r', 'i', s1);
+			insertList(lVer, v1);
+			v1 = createVertice(getSegmentoPontoFinal(s1), 'r', 'f', s1);
+			insertList(lVer, v1);
+			insertList(lSeg, s1);
+
+			s1 = criaSegmentoAEsquerda(p4, p2, bomba);
+			v1 = createVertice(getSegmentoPontoInicial(s1), 'r', 'i', s1);
+			insertList(lVer, v1);
+			v1 = createVertice(getSegmentoPontoFinal(s1), 'r', 'f', s1);
+			insertList(lVer, v1);			
+			insertList(lSeg, s1);		
+
+			s1 = criaSegmentoAEsquerda(p4, p3, bomba);
+			v1 = createVertice(getSegmentoPontoInicial(s1), 'r', 'i', s1);
+			insertList(lVer, v1);
+			v1 = createVertice(getSegmentoPontoFinal(s1), 'r', 'f', s1);
+			insertList(lVer, v1);			
+			insertList(lSeg, s1);
+
+			// vamos definir o raio R (Segmento raio) até a borda
+
+			pRi = createPonto(x, y);
+			pRf = createPonto(*svgW - 1, y);
+			R4i0 = createSegmento(pRi, pRf);
+			Lista lSegInt = createList(qtdList(lSeg));
+			Posic pos1;
+			for(pos1 = getFirst(lSeg); pos1 >= 0; pos1 = getNext(lSeg, pos1)){
+				s1 = getObjList(lSeg, pos1);
+				pI = NULL;
+				i = interseccaoSegmento(R4i0, s1, pI);
+				if (i == 1){
+					
+				}
+			}
+
 		}
 	}
 	calcViewBoxSvg(*city, svgW, svgH);

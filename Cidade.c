@@ -59,7 +59,12 @@ Lista getList(Cidade city, char t){
         return newCity->lSem;
     } else if (t == 'f'){
         return newCity->lFor;
+    } else if (t == 'p'){
+        return newCity->lPre;
+    } else if (t == 'm'){
+        return newCity->lMur;
     }
+    
     printf("Paramento \"t\" incorreto\n");
     return NULL;
 }
@@ -369,6 +374,8 @@ void printSvgCidade(Cidade city, FILE *svg){
     printSvgList(newCity->lQua, svg, printSvgQuadra);
     printSvgList(newCity->lSem, svg, printSvgSemaforo);
     printSvgList(newCity->lTor, svg, printSvgTorre);
+    printSvgList(newCity->lPre, svg, printSvgPredio);
+    printSvgList(newCity->lMur, svg, printSvgMuro);
     for(p1 = getFirst(newCity->lFor); p1 >= 0; p1 = getNext(newCity->lFor, p1)){
         forma = getObjList(newCity->lFor, p1);
         if (forma->type == 0)

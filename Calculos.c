@@ -9,19 +9,20 @@
 
 
 double funcAbs(double value){
-	if (value < 0)
+	
+	if (value < 0.0)
 		return value*(-1);
 	return value;
 }
 /*comparação de numeros de ponto flutuante*/
 
 int doubleEquals(double a, double b){
-	double dif;
-	dif = funcAbs(a - b);
+	double dif = a - b;
+	// printf("dif : %f\n", dif);
+	dif = funcAbs(dif);
 	if (dif < 0.00001)
 		return 1;
-	else
-		return 0;
+	return 0;
 	
 }
 
@@ -262,4 +263,52 @@ int circuloInternoRetangulo(double raio, double xc, double yc, double xr, double
 	}
 	freeRetangulo(r);
 	return 0;
+}
+
+int funcLado(Ponto p1, Ponto p2, Ponto bomba){
+	double resultado = (getPontoX(p1))*(getPontoY(bomba)) - (getPontoY(p1))*(getPontoX(bomba))
+				     + (getPontoY(p1))*(getPontoX(p2)) - (getPontoX(p1))*(getPontoY(p2))
+				     + (getPontoX(bomba))*(getPontoY(p2)) - (getPontoY(bomba))*(getPontoX(p2));
+	if (doubleEquals(resultado, 0)){
+		return 0;
+	} else if (resultado > 0){
+		return 1;
+	} else {
+		return -1;
+	}
+	
+}
+
+Segmento criaSegmentoAEsquerda(Ponto p1, Ponto p2, Ponto bomba){
+	Ponto inicial, final;
+	int res = funcLado(p1, p2, bomba);
+	if (res == 0){
+		printf("pontos colineares\n");
+	} else if (res > 0){
+		inicial = p1;
+		final = p2;
+	} else {
+		inicial = p2;
+		final = p1;
+	}
+	return createSegmento(inicial, final);
+}
+
+int interseccaoSegmento(Segmento s1, Segmento s2, Ponto interseccao){
+	Ponto pS1i, pS1f, pS2i, pS2f;
+	double s, xi, yi;
+	double det = (getPontoX(pS2f) - getPontoX(pS2i))*(getPontoY(pS1f) - getPontoY(pS1i))
+			   - (getPontoY(pS2f) - getPontoY(pS2i))*(getPontoX(pS1f) - getPontoX(pS1i));
+	if (doubleEquals(det, 0)){
+		return 0;
+	}
+
+	s = (getPontoX(pS2f) - getPontoX(pS2i))*(getPontoY(pS2i) - getPontoY(pS1i))
+	  - (getPontoY(pS2f) - getPontoY(pS2i))*(getPontoX(pS2i) - getPontoX(pS1i))/det;
+
+	xi = getPontoX(pS1i) + (getPontoX(pS1f) - getPontoX(pS1i))*s;
+	yi = getPontoY(pS1i) + (getPontoY(pS1f) - getPontoY(pS1i))*s;
+	
+	setPontoX(interseccao, xi);
+	setPontoY(interseccao, yi);
 }

@@ -2,34 +2,25 @@
 #include "Muro.h"
 
 typedef struct{
-    double xIni;
-    double yIni;
-    double xFim;
-    double yFim;
+    Ponto pIni;
+    Ponto pFim;
 } muro;
 
-Muro createMuro(double xIni, double yIni, double xFim, double yFim){
+Muro createMuro(Ponto ini, Ponto fim){
     muro *newMuro;
     newMuro = (muro*)malloc(sizeof(muro));
-    newMuro->xIni = xIni;
-    newMuro->yIni = yIni;
-    newMuro->xFim = xFim;
-    newMuro->yFim = yFim;
+    newMuro->pIni = ini;
+    newMuro->pFim = fim;
+
     return (Muro)newMuro;
 }
-double getMuroXIni(Muro m){
+
+Ponto getMuroPontoInicial(Muro m){
     muro *newMuro = (muro*)m;
-    return newMuro->xIni;
+    return newMuro->pIni;
 }
-double getMuroYIni(Muro m){
+
+Ponto getMuroPontoFinal(Muro m){
     muro *newMuro = (muro*)m;
-    return newMuro->yIni;
-}
-double getMuroXFim(Muro m){
-    muro *newMuro = (muro*)m;
-    return newMuro->xFim;
-}
-double getMuroYFim(Muro m){
-    muro *newMuro = (muro*)m;
-    return newMuro->yFim;
+    return newMuro->pFim;
 }

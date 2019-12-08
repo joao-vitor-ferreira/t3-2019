@@ -66,7 +66,7 @@ Posic insertList(Lista L, Item info){
 		printf("Lista cheia\n");
 		return -1;
 	}
-	return (newHead->vet[newHead->fep]).prev;
+	return newHead->last;
 }
 
 

@@ -1,17 +1,17 @@
 #include <stdio.h>
 #include "Vertice.h"
 #include "Ponto.h"
-#include "Seguimento.h"
+#include "Segmento.h"
 #include <stdlib.h>
 
 typedef struct {
     Ponto point;
-    char *cod;
+    char cod;
     char type;
-    Seguimento pSeg;
+    Segmento pSeg;
 } vertice;
 
-Vertice createVertice(Ponto point, char *cod, char type, void *pSeg){
+Vertice createVertice(Ponto point, char cod, char type, Segmento pSeg){
     vertice *v = (vertice*)malloc(sizeof(vertice));
     v->point = point;
     v->cod = cod;
@@ -30,12 +30,12 @@ char getVerticeTipo(Vertice v){
     return newV->type;
 }
 
-char *getVerticeCodigo(Vertice v){
+char getVerticeCodigo(Vertice v){
     vertice *newV = (vertice*)v;
     return newV->cod;
 }
 
-Seguimento getVerticeSeguimento(Vertice v){
+Segmento getVerticeSegmento(Vertice v){
     vertice *newV = (vertice*)v;
     return newV->pSeg;
 }
