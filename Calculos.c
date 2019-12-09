@@ -6,6 +6,7 @@
 #include "Circulo.h"
 #include "Ponto.h"
 #include "Vector.h"
+#define PI 3.1415926535
 
 
 double funcAbs(double value){
@@ -14,6 +15,12 @@ double funcAbs(double value){
 		return value*(-1);
 	return value;
 }
+
+double anguloPonto(Ponto p1, Ponto bomba){
+	double ang = atan2(getPontoY(p1) - getPontoY(bomba), getPontoX(p1) - getPontoX(bomba));
+	return ang;
+}
+
 /*comparação de numeros de ponto flutuante*/
 
 int doubleEquals(double a, double b){
@@ -270,11 +277,11 @@ int funcLado(Ponto p1, Ponto p2, Ponto bomba){
 				     + (getPontoY(p1))*(getPontoX(p2)) - (getPontoX(p1))*(getPontoY(p2))
 				     + (getPontoX(bomba))*(getPontoY(p2)) - (getPontoY(bomba))*(getPontoX(p2));
 	if (doubleEquals(resultado, 0)){
-		return 0;
+		return 0;//pontos colineares
 	} else if (resultado > 0){
-		return 1;
+		return 1;//bomba a esquerda
 	} else {
-		return -1;
+		return -1;//bomba a direita
 	}
 	
 }
@@ -287,28 +294,66 @@ Segmento criaSegmentoAEsquerda(Ponto p1, Ponto p2, Ponto bomba){
 	} else if (res > 0){
 		inicial = p1;
 		final = p2;
+		printf("esquerda\n");
 	} else {
 		inicial = p2;
 		final = p1;
+		printf("direita\n");
 	}
-	return createSegmento(inicial, final);
+	return createSegmento(inicial, final);//é adicionado os pontos aki por conveniencia
 }
 
 int interseccaoSegmento(Segmento s1, Segmento s2, Ponto interseccao){
 	Ponto pS1i, pS1f, pS2i, pS2f;
-	double s, xi, yi;
-	double det = (getPontoX(pS2f) - getPontoX(pS2i))*(getPontoY(pS1f) - getPontoY(pS1i))
-			   - (getPontoY(pS2f) - getPontoY(pS2i))*(getPontoX(pS1f) - getPontoX(pS1i));
-	if (doubleEquals(det, 0)){
-		return 0;
-	}
+	pS1i = getVerticePonto(getSegmentoVerticeInicial(s1));
+	pS1f = getVerticePonto(getSegmentoVerticeFinal(s1));
+	pS2i = getVerticePonto(getSegmentoVerticeInicial(s2));
+	pS2f = getVerticePonto(getSegmentoVerticeFinal(s2));
+	double xi, yi, s, c1;
+	// m1 = (getPontoY(pS1f) - getPontoY(pS1i))/(getPontoX(pS1f) - getPontoX(pS1i));
+	// c1 = -m1
 
-	s = (getPontoX(pS2f) - getPontoX(pS2i))*(getPontoY(pS2i) - getPontoY(pS1i))
-	  - (getPontoY(pS2f) - getPontoY(pS2i))*(getPontoX(pS2i) - getPontoX(pS1i))/det;
+	if (funcLado(pS1i, pS1f, pS2i) == -1 && funcLado(pS1i, pS1f, pS2f) == 1 && funcLado(pS2i, pS2f, pS1i) == 1 && funcLado(pS2i, pS2f, pS1f) == -1){
+		printf("hahahah\n")		;
+		double det = (getPontoX(pS2f) - getPontoX(pS2i))*(getPontoY(pS1f) - getPontoY(pS1i))
+				   - (getPontoY(pS2f) - getPontoY(pS2i))*(getPontoX(pS1f) - getPontoX(pS1i));		
+		s = (getPontoX(pS2f) - getPontoX(pS2i))*(getPontoY(pS2i) - getPontoY(pS1i))
+		- (getPontoY(pS2f) - getPontoY(pS2i))*(getPontoX(pS2i) - getPontoX(pS1i))/det;
 
-	xi = getPontoX(pS1i) + (getPontoX(pS1f) - getPontoX(pS1i))*s;
-	yi = getPontoY(pS1i) + (getPontoY(pS1f) - getPontoY(pS1i))*s;
+		xi = getPontoX(pS1i) + (getPontoX(pS1f) - getPontoX(pS1i))*s;
+		yi = getPontoY(pS1i) + (getPontoY(pS1f) - getPontoY(pS1i))*s;
 	
-	setPontoX(interseccao, xi);
-	setPontoY(interseccao, yi);
+		setPontoX(interseccao, xi);
+		setPontoY(interseccao, yi);
+		return 1;
+	}
+	return 0;
 }
+
+// int interseccaoSegmento(Segmento s1, Segmento s2, Ponto interseccao){
+// 	Ponto pS1i, pS1f, pS2i, pS2f;
+// 	pS1i = getVerticePonto(getSegmentoVerticeInicial(s1));
+// 	pS1f = getVerticePonto(getSegmentoVerticeFinal(s1));
+// 	pS2i = getVerticePonto(getSegmentoVerticeInicial(s2));
+// 	pS2f = getVerticePonto(getSegmentoVerticeFinal(s2));
+// 	double s, xi, yi;
+// 	double det = (getPontoX(pS2f) - getPontoX(pS2i))*(getPontoY(pS1f) - getPontoY(pS1i))
+// 			   - (getPontoY(pS2f) - getPontoY(pS2i))*(getPontoX(pS1f) - getPontoX(pS1i));
+// 	// printf("%f %f %f %f \n", getPontoX(pS2f), getPontoX(pS2i), 
+// 	// getPontoY(pS2f), getPontoY(pS2i));
+// 	// printf("det; %f\n", det);
+// 	// getchar();
+// 	if (doubleEquals(det, 0)){
+// 		return 0; // não há intersecção
+// 	}
+
+// 	s = (getPontoX(pS2f) - getPontoX(pS2i))*(getPontoY(pS2i) - getPontoY(pS1i))
+// 	  - (getPontoY(pS2f) - getPontoY(pS2i))*(getPontoX(pS2i) - getPontoX(pS1i))/det;
+
+// 	xi = getPontoX(pS1i) + (getPontoX(pS1f) - getPontoX(pS1i))*s;
+// 	yi = getPontoY(pS1i) + (getPontoY(pS1f) - getPontoY(pS1i))*s;
+	
+// 	setPontoX(interseccao, xi);
+// 	setPontoY(interseccao, yi);
+// 	return 1; // há intersecção
+// }

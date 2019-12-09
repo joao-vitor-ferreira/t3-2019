@@ -1,11 +1,10 @@
 #include <stdio.h>
 #include "Vertice.h"
-#include "Ponto.h"
-#include "Segmento.h"
 #include <stdlib.h>
 
 typedef struct {
     Ponto point;
+    double ang;
     char cod;
     char type;
     Segmento pSeg;
@@ -17,6 +16,7 @@ Vertice createVertice(Ponto point, char cod, char type, Segmento pSeg){
     v->cod = cod;
     v->type = type;
     v->pSeg = pSeg;
+    v->ang = 0;
     return (Vertice)v;
 }
 
@@ -38,6 +38,16 @@ char getVerticeCodigo(Vertice v){
 Segmento getVerticeSegmento(Vertice v){
     vertice *newV = (vertice*)v;
     return newV->pSeg;
+}
+
+void setVerticeAngulo(Vertice v, double angulo){
+    vertice *newV = (vertice*)v;
+    newV->ang = angulo;
+}
+
+void setVerticeSegmento(Vertice v, Segmento s){
+    vertice *newV = (vertice*)v;
+    newV->pSeg = s;
 }
 
 void freeVertice(Vertice v){

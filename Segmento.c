@@ -4,35 +4,41 @@
 #include "Segmento.h"
 
 typedef struct {
-    Ponto pIni;
-    Ponto pFim;
+    void *vIni;
+    void *vFim;
 } segmento;
 
 
-Segmento createSegmento(Ponto pIni, Ponto pFim){
+Segmento createSegmento(void *vIni, void *vFim){
     segmento *seg = (segmento*)malloc(sizeof(segmento));
-    seg->pIni = pIni;
-    seg->pFim = pFim;
+    seg->vIni = vIni;
+    seg->vFim = vFim;
     return (Segmento)seg;
 }
 
-Ponto getSegmentoPontoInicial(Segmento seg){
+void *getSegmentoVerticeInicial(Segmento seg){
     segmento *newSeg = (segmento*)seg;
-    return newSeg->pIni;
+    return newSeg->vIni;
 }
 
-Ponto getSegmentoPontoFinal(Segmento seg){
+void *getSegmentoVerticeFinal(Segmento seg){
     segmento *newSeg = (segmento*)seg;
-    return newSeg->pFim;
+    return newSeg->vFim;
+}
+
+void setSegmentoVerticeInicial(Segmento seg, void *vIni){
+    segmento *newSeg = (segmento*)seg;
+    newSeg->vIni = vIni;
+}
+
+void setSegmentoVerticeFinal(Segmento seg, void *vFim){
+    segmento *newSeg = (segmento*)seg;
+    newSeg->vFim = vFim;
 }
 
 void freeSegmento(Segmento seg){
     segmento *newSeg = (segmento*)seg;
     if (newSeg != NULL){
-        if (newSeg->pIni != NULL)
-            freePonto(newSeg->pIni);
-        if (newSeg->pFim != NULL)
-            freePonto(newSeg->pFim);
         free(newSeg);
     }
 }     

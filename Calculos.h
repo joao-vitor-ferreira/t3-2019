@@ -8,6 +8,7 @@
 #include "Retangulo.h"
 #include "Ponto.h"
 #include "Segmento.h"
+#include "Vertice.h"
 	
 /*CALCULA A DISTÂNCIA ENTRE DOIS PONTOS NO PLANO CARTESIANO*/
 double distanciaEntrePontos(double xa, double ya, double xb, double yb);
@@ -43,4 +44,6 @@ double funcAbs(double value);
 Segmento criaSegmentoAEsquerda(Ponto p1, Ponto p2, Ponto bomba);
 /*verifica se dois segmentos se interseptam, se sim retorna 1 e o Ponto interseccao recebe a coordenada de intersecção, senão retorna 0 e o Ponto interseccao recebe NULL*/
 int interseccaoSegmento(Segmento s1, Segmento s2, Ponto interseccao);
+/*calcula a arco tangente de (p1.y - bomba.y) (p1.x - bomba.x) em radianos*/
+double anguloPonto(Ponto p1, Ponto bomba);
 #endif
