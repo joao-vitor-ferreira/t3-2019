@@ -12,6 +12,8 @@ void *getSegmentoVerticeInicial(Segmento seg);
 void *getSegmentoVerticeFinal(Segmento seg);
 void setSegmentoVerticeInicial(Segmento seg, void *vIni);
 void setSegmentoVerticeFinal(Segmento seg, void *vIni);
+void setSegmentoId(Segmento s, int id);
+int getSegmentoId(Segmento s);
 void freeSegmento(Segmento seg);
 
 #endif

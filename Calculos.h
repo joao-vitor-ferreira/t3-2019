@@ -46,4 +46,6 @@ Segmento criaSegmentoAEsquerda(Ponto p1, Ponto p2, Ponto bomba);
 int interseccaoSegmento(Segmento s1, Segmento s2, Ponto interseccao);
 /*calcula a arco tangente de (p1.y - bomba.y) (p1.x - bomba.x) em radianos*/
 double anguloPonto(Ponto p1, Ponto bomba);
+/*retorna 1 se são iguais, 0 se são diferentes*/
+int doubleEquals(double a, double b);
 #endif

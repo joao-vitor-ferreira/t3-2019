@@ -905,6 +905,38 @@ void muroToVertice(Muro m, ...){
 	va_end(ap1);
 }
 
+int verticeEncoberto(Segmento raio, Segmento *aSeg, int tamanho_aSeg, Ponto pI){
+	int i;
+	for (i = 0; i < tamanho_aSeg; i++){
+		if (interseccaoSegmento(raio, aSeg[i], pI)){
+			return 1;
+		} else {
+			setPontoX(pI, 0);
+			setPontoY(pI, 0);			
+			return 0;
+		}
+	}
+}
+
+void desativaSegmento(Lista lSegAtivo, Segmento s){ // aki
+	Posic pos;
+	int i;
+	for (pos = getFirst(lSegAtivo); pos >=0; pos = getNext(lSegAtivo, pos)){
+		if (getSegmentoId(s) == getSegmentoId(getObjList(lSegAtivo, pos))) {
+			printf("acho\n");
+			removeList(lSegAtivo, pos);
+			break;
+		}
+	}
+}
+
+Segmento segmentoAtivoMaisProximo(Lista lSegAtivo){
+	Posic pos1;
+	pos1 = getLast(lSegAtivo);
+	Segmento s = getObjList(lSegAtivo, pos1);
+	removeList(lSegAtivo, pos1);
+}
+
 void leituraQry(int argc, char **argv, double *svgH, double *svgW, FILE *svgQry, Cidade *city, Lista lseg, Vector vetVert){
 	FILE *entrada = NULL, *txt = NULL, *svgBb;
 	Item it;
@@ -1305,12 +1337,12 @@ void leituraQry(int argc, char **argv, double *svgH, double *svgW, FILE *svgQry,
 			}
 			freeVector(vet);
 			freePonto(point);
-		} else if (strcmp(word, "brl") == 0){ // comando te alteração
+		} else if (strcmp(word, "brll") == 0){ // comando te alteração
 			calcViewBoxSvg(*city, svgW, svgH);
 			sscanf(line, "%s %lf %lf", word, &x, &y);
 			int count = 0;
 			Segmento s1, R4i0, s2, s3;
-			Vertice v1, vRi, vRf;
+			Vertice v1, vRi, vRf, bomba_ver;
 			Ponto bomba = createPonto(x, y), p1, p2, p3, p4, pRi, pRf, pI;
 			Lista lVer = createList(qtdList(getList(*city, 'p'))*8 + qtdList(getList(*city, 'm'))*2 + 8);
 			Lista lSeg = createList(qtdList(getList(*city, 'p'))*8 + qtdList(getList(*city, 'm')) + 4);
@@ -1386,14 +1418,12 @@ void leituraQry(int argc, char **argv, double *svgH, double *svgW, FILE *svgQry,
 				s1 = getObjList(lSeg, pos1);
 				pI = createPonto(0, 0);
 				i = interseccaoSegmento(R4i0, s1, pI);
-				printf("inter %d %d\n", i, qtdList(lSeg));
+				
+				// fprintf(svgQry, "<line x1=\"%f\" y1=\"%f\" x2=\"%f\" y2=\"%f\" stroke-width=\"1.1\" stroke=\"red\" />\n", getPontoX(getVerticePonto(getSegmentoVerticeInicial(R4i0))), getPontoY(getVerticePonto(getSegmentoVerticeInicial(R4i0))), getPontoX(getVerticePonto(getSegmentoVerticeFinal(R4i0))), getPontoY(getVerticePonto(getSegmentoVerticeFinal(R4i0))));
 				if (i == 1){
-					fprintf(svgQry, "<line x1=\"%f\" y1=\"%f\" x2=\"%f\" y2=\"%f\" stroke-width=\"4\" stroke=\"red\" />\n", getPontoX(getVerticePonto(getSegmentoVerticeInicial(R4i0))), getPontoY(getVerticePonto(getSegmentoVerticeInicial(R4i0))), getPontoX(getVerticePonto(getSegmentoVerticeFinal(R4i0))), getPontoY(getVerticePonto(getSegmentoVerticeFinal(R4i0))));
-					fprintf(svgQry, "<line x1=\"%f\" y1=\"%f\" x2=\"%f\" y2=\"%f\" stroke-width=\"4\" stroke=\"red\" />\n", getPontoX(getVerticePonto(getSegmentoVerticeInicial(s1))), getPontoY(getVerticePonto(getSegmentoVerticeInicial(s1))), getPontoX(getVerticePonto(getSegmentoVerticeFinal(s1))), getPontoY(getVerticePonto(getSegmentoVerticeFinal(s1))));
-					fprintf(svgQry, "<circle cx = \"%f\" cy = \"%f\" r = \"3\" fill = \"blue\" stroke=\"blue\" stroke-width=\"1\" fill-opacity = \"1\"/>\n", getPontoX(pI), getPontoY(pI));
+					// fprintf(svgQry, "<line x1=\"%f\" y1=\"%f\" x2=\"%f\" y2=\"%f\" stroke-width=\"1.1\" stroke=\"red\" />\n", getPontoX(getVerticePonto(getSegmentoVerticeInicial(s1))), getPontoY(getVerticePonto(getSegmentoVerticeInicial(s1))), getPontoX(getVerticePonto(getSegmentoVerticeFinal(s1))), getPontoY(getVerticePonto(getSegmentoVerticeFinal(s1))));
+					// fprintf(svgQry, "<circle cx = \"%f\" cy = \"%f\" r = \"3\" fill = \"blue\" stroke=\"blue\" stroke-width=\"1.1\" fill-opacity = \"1\"/>\n", getPontoX(pI), getPontoY(pI));
 					// fprintf(svgQry, "</svg>");
-					getchar();
-					getchar();
 					// vamos dividir o segmento s1 em dois segmento
 					//esse segmento a ser feito será o segmento a esquerda do raio
 					p1 = createPonto(getPontoX(pI), getPontoY(pI));
@@ -1426,13 +1456,92 @@ void leituraQry(int argc, char **argv, double *svgH, double *svgW, FILE *svgQry,
 				}
 				freePonto(pI);
 			}
+			getchar();
 			//juntar lista lVer com lVerNew, ou seja, os vertices novos com os vertice ja calculados
-			Lista lVerCompleta = createList(qtdList(lVer) + qtdList(lVerNew));
-			for (pos1 = getFirst(lVer); pos1 >=0; pos1 = getNext(lVer, pos1)){
-				insertList(lVerCompleta, getObjList(lVer, pos1));
+			int tamanho_aVer = qtdList(lVer) + qtdList(lVerNew);
+			Vertice *aVer = (Vertice*)malloc(sizeof(Vertice)*tamanho_aVer);
+			
+			for (pos1 = getFirst(lVer), i = 0; pos1 >=0; pos1 = getNext(lVer, pos1), i++){
+				aVer[i] = getObjList(lVer, pos1);
 			}
-			for (pos1 = getFirst(lVerNew); pos1 >=0; pos1 = getNext(lVerNew, pos1)){
-				insertList(lVerCompleta, getObjList(lVerNew, pos1));
+			deleteList(lVer);
+
+			for (pos1 = getFirst(lVerNew); pos1 >=0; pos1 = getNext(lVerNew, pos1), i++){
+				aVer[i] = getObjList(lVerNew, pos1);
+			}
+			deleteList(lVerNew);
+			//juntar lSeg com lSegInt
+			int tamanho_aSeg = qtdList(lSeg) + qtdList(lSegInt);
+			Segmento *aSeg = (Segmento*)malloc(sizeof(Segmento)*tamanho_aSeg);
+			
+			for (pos1 = getFirst(lSeg), i = 0; pos1 >= 0; pos1 = getNext(lSeg, pos1), i++){
+				aSeg[i] = (Segmento)getObjList(lSeg, pos1);
+			}
+			deleteList(lSeg);
+
+			for (pos1 = getFirst(lSegInt); pos1 >= 0; pos1 = getNext(lSegInt, pos1), i++){
+				aSeg[i] = (Segmento)getObjList(lSegInt, pos1);
+			}
+			
+			deleteList(lSegInt);
+
+			//ordenação dos vetores
+
+			qsort(aVer, tamanho_aVer, sizeof(Vertice), comparaVertice);
+
+			// começa o processamento dos vertices
+			Segmento Raio = createSegmento(NULL, NULL);
+			Lista lSegAtv = createList(tamanho_aSeg);
+			Lista lSegResposta = createList(7000);
+			
+			p1 = createPonto(getPontoX(aVer[0]), getPontoY(aVer[0]));
+			// Vertice biombo = createVertice(p1, getVerticeCodigo(aVer[0]), getVerticeTipo(aVer[0]), getVerticeSegmento(aVer[0]));
+			Vertice biombo = aVer[0];
+			bomba_ver = createVertice(bomba, 'a', 'n', NULL);
+			pI = createPonto(0, 0);
+			int id_seg = 0, indice_lSegRes = 0;
+			for (i = 0; i < tamanho_aVer; i++){
+				// printf("%c\n", getVerticeTipo(aVer[i]));
+				if (getVerticeTipo(aVer[i]) == 'i'){
+					// printf("%c\n", getVerticeCodigo(aVer[i]));
+					if (getVerticeCodigo(aVer[i]) != 'a'){
+						setSegmentoId(getVerticeSegmento(aVer[i]), id_seg);
+						id_seg++;
+						insertList(lSegAtv, getVerticeSegmento(aVer[i]));
+					}
+					setSegmentoVerticeInicial(Raio, bomba_ver);
+					setSegmentoVerticeFinal(Raio, aVer[i]);
+					if(!verticeEncoberto(Raio, aSeg, tamanho_aSeg, pI)){
+						s1 = segmentoAtivoMaisProximo(lSegAtv);
+						//pI é definido na função verticeEncoberto
+						p1 = createPonto(getPontoX(getVerticePonto(biombo)), getPontoY(getVerticePonto(biombo)));
+						p2 = createPonto(getPontoX(pI), getPontoY(pI));
+						s2 = createSegmento(p1, p2);
+						p1 = createPonto(getPontoX(pI), getPontoY(pI));
+						p2 = createPonto(getPontoX(getVerticePonto(aVer[i])), getPontoY(getVerticePonto(aVer[i])));
+						s3 = createSegmento(p1, p2);
+						biombo = aVer[i];
+						insertList(lSegResposta, s2);
+						insertList(lSegResposta, s3);
+					}
+				} else {
+					setSegmentoVerticeInicial(Raio, bomba_ver);
+					setSegmentoVerticeFinal(Raio, aVer[i]);					
+					if (verticeEncoberto(Raio, aSeg, tamanho_aSeg, pI)){
+						desativaSegmento(lSegAtv, getVerticeSegmento(aVer[i]));
+					} else {
+						desativaSegmento(lSegAtv, getVerticeSegmento(aVer[i]));
+						p1 = createPonto(getPontoX(getVerticePonto(biombo)), getPontoY(getVerticePonto(biombo)));
+						p2 = createPonto(getPontoX(getVerticePonto(aVer[i])), getPontoY(getVerticePonto(aVer[i])));
+						s2 = createSegmento(p1, p2);
+						p1 = createPonto(getPontoX(getVerticePonto(aVer[i])), getPontoY(getVerticePonto(aVer[i])));
+						p2 = createPonto(getPontoX(pI), getPontoY(pI));
+						createSegmento(p1, p2);
+						biombo = createVertice(createPonto(getPontoX(pI), getPontoY(pI)), 'a', 'z', NULL);
+						insertList(lSegResposta, s2);
+						insertList(lSegResposta, s3);
+					}
+				}
 			}
 
 		}

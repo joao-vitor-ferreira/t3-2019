@@ -294,11 +294,11 @@ Segmento criaSegmentoAEsquerda(Ponto p1, Ponto p2, Ponto bomba){
 	} else if (res > 0){
 		inicial = p1;
 		final = p2;
-		printf("esquerda\n");
+		
 	} else {
 		inicial = p2;
 		final = p1;
-		printf("direita\n");
+		
 	}
 	return createSegmento(inicial, final);//é adicionado os pontos aki por conveniencia
 }
@@ -314,7 +314,7 @@ int interseccaoSegmento(Segmento s1, Segmento s2, Ponto interseccao){
 	// c1 = -m1
 
 	if (funcLado(pS1i, pS1f, pS2i) == -1 && funcLado(pS1i, pS1f, pS2f) == 1 && funcLado(pS2i, pS2f, pS1i) == 1 && funcLado(pS2i, pS2f, pS1f) == -1){
-		printf("hahahah\n")		;
+		
 		double det = (getPontoX(pS2f) - getPontoX(pS2i))*(getPontoY(pS1f) - getPontoY(pS1i))
 				   - (getPontoY(pS2f) - getPontoY(pS2i))*(getPontoX(pS1f) - getPontoX(pS1i));		
 		s = (getPontoX(pS2f) - getPontoX(pS2i))*(getPontoY(pS2i) - getPontoY(pS1i))
